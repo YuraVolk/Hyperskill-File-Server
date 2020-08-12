@@ -8,10 +8,12 @@ public class Main {
     private static Database database = new Database();
 
     public static void main(String[] args) {
+
+
         try (ServerSocket server = new ServerSocket(23456)) {
-            System.out.println("Server started!");
+           // System.out.println("Server started!");
             int idCounter = 0;
-            //server.setSoTimeout(1000);
+           // server.setSoTimeout(200);
             while (true) {
                 try {
                     new Session(server.accept(), ++idCounter).start();
@@ -44,21 +46,27 @@ public class Main {
                     try {
                         String msg = input.readUTF();
                         if ("exit".equals(msg)) {
-                         //   System.out.printf("Client %d disconnected!\n", id);
-                            break;
+                            break loop;
                         } else {
                          //   System.out.printf("Client %d sent: %s\n", id, msg);
                            // int wordsCount = msg.split("\\s+").length;
                          //   output.writeUTF("Count is " + wordsCount);
+
+                            System.out.println(msg);
+
                             if (msg.startsWith("PUT")) {
+
                                 String[] request = msg.split("-");
 
+
                                 if (database.addFile(request[1], request[2])) {
+
                                     output.writeUTF("Ok, the response says that the file was created!");
                                 } else {
                                     output.writeUTF("Ok, the response says that creating the file was forbidden!");
                                 }
 
+                                System.out.println(database);
                             } else if (msg.startsWith("GET")) {
                                 String[] request = msg.split(" ");
 
@@ -77,8 +85,9 @@ public class Main {
                                 } else {
                                     output.writeUTF("Ok, the response says that the file was not found!");
                                 }
-                            } else if (msg.equals("exit")) {
-                                break loop;
+                            } else {
+
+
                             }
 
                             System.out.println(database);

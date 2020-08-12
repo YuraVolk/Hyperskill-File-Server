@@ -42,9 +42,13 @@ public class Main {
                             request = "DELETE " + filename;
                         } else if (msg.equals("exit")) {
 
+                            request = "exit";
                         }
+
                         output.writeUTF(request);
-                        clientRunning = false;
+
+
+                       // clientRunning = false;
                     } catch (IOException e) {
                         break;
                     }
@@ -67,8 +71,10 @@ public class Main {
             fromConsoleToServer.join();
             fromServerToConsole.join();
 
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+
         }
     }
+
+
 }
