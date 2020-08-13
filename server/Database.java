@@ -29,6 +29,9 @@ public class Database implements java.io.Serializable {
 
     public boolean addFile(String name, String content) throws IOException {
         if (filenames.containsKey(name)) {
+
+
+
             return false;
         } else {
             filenames.put(name, content);
@@ -42,6 +45,11 @@ public class Database implements java.io.Serializable {
         if (filenames.containsKey(name)) {
             filenames.remove(name);
             saveDatabase();
+            String absoluteFilePath = "C:\\Users\\Yuriy Volkovskiy\\Desktop\\File Server\\File Server\\task\\src\\server\\data\\" + name;
+            File file = new File(absoluteFilePath);
+            try {
+                file.delete();
+            } catch (Exception e) { }
             return true;
         } else {
             return false;

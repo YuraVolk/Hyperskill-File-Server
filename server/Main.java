@@ -9,24 +9,64 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         try (ServerSocket server = new ServerSocket(23456)) {
-           // System.out.println("Server started!");
-            int idCounter = 0;
-           // server.setSoTimeout(200);
             while (true) {
-                try {
-                    new Session(server.accept(), ++idCounter).start();
-                } catch (SocketTimeoutException e) {
-                    break;
+                try (Socket socket = server.accept(); // accepting a new client
+                     DataInputStream input = new DataInputStream(socket.getInputStream());
+                     DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
+                    String msg = input.readUTF(); // reading a message
+                    if ("exit".equals(msg)) {
+                        break;
+                    } else {
+                        System.out.println(msg);
+                        if (msg.startsWith("PUT")) {
+                            String[] request = msg.split("-");
+
+                            if (database.addFile(request[1], request[2])) {
+                                try (BufferedOutputStream bf = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Yuriy Volkovskiy\\Desktop\\File Server\\File Server\\task\\src\\server\\data\\" + request[1]))) {
+                                    byte[] array = request[2].getBytes();
+                                    bf.write(array);
+                                } catch (IOException e) {
+                                    System.err.println(e.getMessage());
+                                }
+                                output.writeUTF("Ok, the response says that the file was created!");
+                            } else {
+                                output.writeUTF("Ok, the response says that create file was forbidden!");
+                            }
+
+                            System.out.println(database);
+                        } else if (msg.startsWith("GET")) {
+                            String[] request = msg.split(" ");
+
+                            if (!database.getFile(request[1]).getValue() == false) {
+                                output.writeUTF("Ok, the content of the file is: " + database.getFile(request[1]).getKey());
+                            } else {
+                                output.writeUTF("Ok, the response says that the file was not found!");
+                            }
+                        } else if (msg.startsWith("DELETE")) {
+                            String[] request = msg.split(" ");
+
+                            if (database.removeFile(request[1])) {
+                                output.writeUTF("Ok, the response says that the file was successfully deleted!");
+                            } else {
+                                output.writeUTF("Ok, the response says that the file was not found!");
+                            }
+                        }
+                    }
+                    //  output.writeUTF(handler(msg));
+
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private static class Session extends Thread {
+
+    /*private static class Session extends Thread {
 
         private final int id;
         private final Socket socket;
@@ -38,8 +78,7 @@ public class Main {
 
         @Override
         public void run() {
-            try (DataInputStream input = new DataInputStream(socket.getInputStream());
-                 DataOutputStream output = new DataOutputStream(socket.getOutputStream())) {
+            try () {
 
                 loop:
                 while (!this.isInterrupted()) {
@@ -103,5 +142,5 @@ public class Main {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 }

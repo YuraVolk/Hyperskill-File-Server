@@ -18,7 +18,7 @@ public class Main {
             Scanner scanner = new Scanner(System.in);
 
             Thread fromConsoleToServer = new Thread(() -> {
-                while (clientRunning) {
+                //while (clientRunning) {
                     try {
                         String msg = scanner.next();
                         String request = "";
@@ -50,9 +50,9 @@ public class Main {
 
                        // clientRunning = false;
                     } catch (IOException e) {
-                        break;
+                     //   break;
                     }
-                }
+               // }
             });
 
             Thread fromServerToConsole = new Thread(() -> {
