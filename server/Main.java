@@ -2,6 +2,7 @@ package server;
 
 import java.io.*;
 import java.net.*;
+import java.util.Arrays;
 
 public class Main {
 
@@ -21,6 +22,14 @@ public class Main {
                         System.out.println(msg);
                         if (msg.startsWith("PUT")) {
                             String[] request = msg.split("-");
+
+                            if (request.length == 2) {
+                                String name = request[1];
+                                request = new String[3];
+                                request[1] = name;
+                                request[2] = "";
+                            }
+
 
                             if (database.addFile(request[1], request[2])) {
                                 try (BufferedOutputStream bf = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Yuriy Volkovskiy\\Desktop\\File Server\\File Server\\task\\src\\server\\data\\" + request[1]))) {

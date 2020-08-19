@@ -29,6 +29,7 @@ public class Main {
                             System.out.print("Enter file content: ");
                             String fileContent = scanner.nextLine();
 
+                            System.out.println(request);
                             request = "PUT-" + filename + "-" + fileContent;
                         } else if (msg.equals("1")) {
                             System.out.print("Enter filename: ");
