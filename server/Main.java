@@ -21,7 +21,7 @@ public class Main {
                     } else {
                         System.out.println(msg);
                         if (msg.startsWith("PUT")) {
-                            String[] request = msg.split("-");
+                            String[] request = msg.split("~");
 
                             if (request.length == 2) {
                                 String name = request[1];
@@ -29,6 +29,8 @@ public class Main {
                                 request[1] = name;
                                 request[2] = "";
                             }
+
+                            System.out.println(Arrays.toString(request));
 
 
                             if (database.addFile(request[1], request[2])) {
@@ -38,7 +40,10 @@ public class Main {
                                 } catch (IOException e) {
                                     System.err.println(e.getMessage());
                                 }
-                                output.writeUTF("Ok, the response says that the file was created!");
+
+                                Database.File fileContent = database.getFile(request[1], "1").getKey();
+
+                                output.writeUTF("Response says that file is saved! ID = " + fileContent.getHashCode());
                             } else {
                                 output.writeUTF("Ok, the response says that create file was forbidden!");
                             }
@@ -47,15 +52,24 @@ public class Main {
                         } else if (msg.startsWith("GET")) {
                             String[] request = msg.split(" ");
 
-                            if (!database.getFile(request[1]).getValue() == false) {
-                                output.writeUTF("Ok, the content of the file is: " + database.getFile(request[1]).getKey());
+
+
+                            if (!database.getFile(request[1], request[2]).getValue() == false) {
+                                Database.File fileContent = database.getFile(request[1], request[2]).getKey();
+                                try (BufferedOutputStream bf = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Yuriy Volkovskiy\\Desktop\\File Server\\File Server\\task\\src\\client\\data\\" + fileContent.getName()))) {
+                                    byte[] array = fileContent.getContent().getBytes();
+                                    bf.write(array);
+                                } catch (IOException e) {
+                                    System.err.println(e.getMessage());
+                                }
+                                output.writeUTF("Ok, the content of the file is: " + fileContent.getContent());
                             } else {
-                                output.writeUTF("Ok, the response says that the file was not found!");
+                                output.writeUTF("The response says that this file is not found!");
                             }
                         } else if (msg.startsWith("DELETE")) {
                             String[] request = msg.split(" ");
 
-                            if (database.removeFile(request[1])) {
+                            if (database.removeFile(request[1], request[2])) {
                                 output.writeUTF("Ok, the response says that the file was successfully deleted!");
                             } else {
                                 output.writeUTF("Ok, the response says that the file was not found!");

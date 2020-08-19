@@ -30,17 +30,32 @@ public class Main {
                             String fileContent = scanner.nextLine();
 
                             System.out.println(request);
-                            request = "PUT-" + filename + "-" + fileContent;
+                            request = "PUT~" + filename + "~" + fileContent;
                         } else if (msg.equals("1")) {
-                            System.out.print("Enter filename: ");
-                            String filename = scanner.next();
+                            System.out.print("Do you want to get the file by name or by id (1 - name, 2 - id): ");
+                            int choice = scanner.nextInt();
+                            String filename;
+                            if (choice == 1) {
+                                System.out.print("Enter filename: ");
+                            } else {
+                                System.out.print("Enter id: ");
+                            }
+                            filename = scanner.next();
 
-                            request = "GET " + filename;
+
+                            request = "GET " + filename + " " + choice;
                         } else if (msg.equals("3")) {
-                            System.out.print("Enter filename: ");
-                            String filename = scanner.next();
+                            System.out.print("Do you want to get the file by name or by id (1 - name, 2 - id): ");
+                            int choice = scanner.nextInt();
+                            String filename;
+                            if (choice == 1) {
+                                System.out.print("Enter filename: ");
+                            } else {
+                                System.out.print("Enter id: ");
+                            }
+                            filename = scanner.next();
 
-                            request = "DELETE " + filename;
+                            request = "DELETE " + filename + " " + choice;
                         } else if (msg.equals("exit")) {
 
                             request = "exit";
