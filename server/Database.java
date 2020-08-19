@@ -12,7 +12,7 @@ public class Database implements java.io.Serializable {
 
         File(String name, String content) {
             this.name = name;
-            this.hashCode = Integer.parseInt(Integer.toString(name.hashCode()).substring(0, 2));
+            this.hashCode = Integer.parseInt(Integer.toString(name.length() * 25).substring(0, 2));
             this.content = content;
         }
 
