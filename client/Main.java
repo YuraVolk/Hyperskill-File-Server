@@ -43,7 +43,17 @@ public class Main {
                             filename = scanner.next();
 
 
-                            request = "GET " + filename + " " + choice;
+
+                            if (server.Main.database.filenames.containsFile(filename)) {
+                                System.out.print("The file was downloaded! Specify a name for it: ");
+                                String outputName = scanner.next();
+
+                                request = "GET " + filename + " " + choice + " " + outputName;
+                            } else {
+                                request = "GET " + filename + " " + choice;
+                            }
+
+
                         } else if (msg.equals("3")) {
                             System.out.print("Do you want to get the file by name or by id (1 - name, 2 - id): ");
                             int choice = scanner.nextInt();

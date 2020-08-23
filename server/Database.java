@@ -1,7 +1,11 @@
 package server;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Database implements java.io.Serializable {
 
@@ -12,7 +16,7 @@ public class Database implements java.io.Serializable {
 
         File(String name, String content) {
             this.name = name;
-            this.hashCode = Integer.parseInt(Integer.toString(name.length() * 25).substring(0, 2));
+            this.hashCode = Integer.parseInt(Integer.toString(name.length() + 1 * 25).substring(0, 2));
             this.content = content;
         }
 
@@ -86,7 +90,7 @@ public class Database implements java.io.Serializable {
     }
 
 
-    private FileList filenames = new FileList();
+    public FileList filenames = new FileList();
 
     public Database() {
         try {
@@ -108,15 +112,44 @@ public class Database implements java.io.Serializable {
         fileOut.close();
     }
 
+    private String readLineByLineJava8(String filePath) {
+        StringBuilder contentBuilder = new StringBuilder();
+
+        try (Stream<String> stream = Files.lines( Paths.get(filePath), StandardCharsets.UTF_8)) {
+            stream.forEach(s -> contentBuilder.append(s).append("\n"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return contentBuilder.toString();
+    }
+
+
 
     public boolean addFile(String name, String content) throws IOException {
-        if (filenames.containsFile(name)) {
-            return false;
-        } else {
-            filenames.addFile(name, content);
+
+        String filepath = "C:\\Users\\Yuriy Volkovskiy\\Desktop\\File Server\\File Server\\task\\src\\client\\data\\" + name;
+        java.io.File f = new java.io.File(filepath);
+        if (f.exists() && !f.isDirectory()) {
+            filenames.addFile(content, readLineByLineJava8(filepath));
+
+            if (content.length() == 0) {
+                content = "noName.txt";
+            }
+
+            try (BufferedOutputStream bf = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Yuriy Volkovskiy\\Desktop\\File Server\\File Server\\task\\src\\server\\data\\" + content))) {
+                byte[] array = readLineByLineJava8(filepath).getBytes();
+                bf.write(array);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+            }
+
             saveDatabase();
             return true;
+        } else {
+            return false;
         }
+
 
     }
 

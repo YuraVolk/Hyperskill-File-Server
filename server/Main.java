@@ -6,7 +6,7 @@ import java.util.Arrays;
 
 public class Main {
 
-    private static Database database = new Database();
+    public static Database database = new Database();
 
     public static void main(String[] args) {
 
@@ -23,6 +23,8 @@ public class Main {
                         if (msg.startsWith("PUT")) {
                             String[] request = msg.split("~");
 
+                            System.out.println(request.length);
+
                             if (request.length == 2) {
                                 String name = request[1];
                                 request = new String[3];
@@ -32,14 +34,8 @@ public class Main {
 
                             System.out.println(Arrays.toString(request));
 
-
                             if (database.addFile(request[1], request[2])) {
-                                try (BufferedOutputStream bf = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Yuriy Volkovskiy\\Desktop\\File Server\\File Server\\task\\src\\server\\data\\" + request[1]))) {
-                                    byte[] array = request[2].getBytes();
-                                    bf.write(array);
-                                } catch (IOException e) {
-                                    System.err.println(e.getMessage());
-                                }
+
 
                                 Database.File fileContent = database.getFile(request[1], "1").getKey();
 
@@ -52,17 +48,16 @@ public class Main {
                         } else if (msg.startsWith("GET")) {
                             String[] request = msg.split(" ");
 
-
-
                             if (!database.getFile(request[1], request[2]).getValue() == false) {
-                                Database.File fileContent = database.getFile(request[1], request[2]).getKey();
-                                try (BufferedOutputStream bf = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Yuriy Volkovskiy\\Desktop\\File Server\\File Server\\task\\src\\client\\data\\" + fileContent.getName()))) {
+                                Database.File fileContent = database.getFile(request[2], "1").getKey();
+
+                                try (BufferedOutputStream bf = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Yuriy Volkovskiy\\Desktop\\File Server\\File Server\\task\\src\\client\\data\\" + request[3]))) {
                                     byte[] array = fileContent.getContent().getBytes();
                                     bf.write(array);
                                 } catch (IOException e) {
                                     System.err.println(e.getMessage());
                                 }
-                                output.writeUTF("Ok, the content of the file is: " + fileContent.getContent());
+                                output.writeUTF("GET NAME");
                             } else {
                                 output.writeUTF("The response says that this file is not found!");
                             }
