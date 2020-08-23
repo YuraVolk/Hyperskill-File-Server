@@ -37,7 +37,8 @@ public class Main {
                             if (database.addFile(request[1], request[2])) {
 
 
-                                Database.File fileContent = database.getFile(request[1], "1").getKey();
+                                Database.File fileContent = database.getFile(request[2], "1").getKey();
+                                System.out.println(fileContent);
 
                                 output.writeUTF("Response says that file is saved! ID = " + fileContent.getHashCode());
                             } else {
@@ -48,8 +49,9 @@ public class Main {
                         } else if (msg.startsWith("GET")) {
                             String[] request = msg.split(" ");
 
+
                             if (!database.getFile(request[1], request[2]).getValue() == false) {
-                                Database.File fileContent = database.getFile(request[2], "1").getKey();
+                                Database.File fileContent = database.getFile(request[1], request[2]).getKey();
 
                                 try (BufferedOutputStream bf = new BufferedOutputStream(new FileOutputStream("C:\\Users\\Yuriy Volkovskiy\\Desktop\\File Server\\File Server\\task\\src\\client\\data\\" + request[3]))) {
                                     byte[] array = fileContent.getContent().getBytes();

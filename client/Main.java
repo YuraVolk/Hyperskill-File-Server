@@ -43,8 +43,14 @@ public class Main {
                             filename = scanner.next();
 
 
+                            boolean containsFile = false;
+                            if (choice == 2) {
+                                containsFile = server.Main.database.filenames.containsFileByID(Integer.parseInt(filename, 10));
+                            } else {
+                                containsFile = server.Main.database.filenames.containsFile(filename);
+                            }
 
-                            if (server.Main.database.filenames.containsFile(filename)) {
+                            if (containsFile) {
                                 System.out.print("The file was downloaded! Specify a name for it: ");
                                 String outputName = scanner.next();
 

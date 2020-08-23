@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Stream;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Database implements java.io.Serializable {
 
@@ -16,8 +17,9 @@ public class Database implements java.io.Serializable {
 
         File(String name, String content) {
             this.name = name;
-            this.hashCode = Integer.parseInt(Integer.toString(name.length() + 1 * 25).substring(0, 2));
-            this.content = content;
+            int randomNum = ThreadLocalRandom.current().nextInt(10, 100);
+            this.hashCode = randomNum;
+            this.content = content.trim();
         }
 
         public String getName() {
@@ -70,7 +72,15 @@ public class Database implements java.io.Serializable {
         }
 
         public File getFileByID(int id) {
-            return files.stream().filter(o -> o.getHashCode() == id).findFirst().get();
+            for(File file : files) {
+               // System.out.println(id + " equals to " + file.getHashCode());
+                if(file.getHashCode() == id) {
+               //     System.out.println("true");
+                    return file;
+                }
+            }
+
+            return null;
         }
 
         public void removeFile(String name) {
@@ -188,15 +198,32 @@ public class Database implements java.io.Serializable {
     public Pair<File, Boolean> getFile(String name, String choice) throws IOException {
         boolean containsfile;
 
+
+
         if (choice.equals("2")) {
-            containsfile = filenames.containsFileByID(Integer.parseInt(name, 10));
+
+
+            if (filenames.getFileByID(Integer.parseInt(name, 10)) != null) {
+                containsfile = true;
+            } else {
+                containsfile = false;
+            }
+
+
+
         } else {
-            containsfile = filenames.containsFile(name);
+            if (filenames.getFileByName(name) != null) {
+                containsfile = true;
+            } else {
+                containsfile = false;
+            }
+
         }
 
+
+        System.out.println("TEST " + name + " " + choice);
         if (containsfile) {
             saveDatabase();
-            System.out.println(choice);
             if (choice.equals("2")) {
 
                 return new Pair<>(filenames.getFileByID(Integer.parseInt(name, 10)), true);
